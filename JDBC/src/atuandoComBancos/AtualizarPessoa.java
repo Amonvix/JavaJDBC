@@ -4,9 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class AtualizarPessoa {
@@ -16,28 +13,32 @@ public class AtualizarPessoa {
 
 		System.out.println("Qual registro iremos alterar? \n");
 
-		String selectString = """
-				SELECT * FROM pessoas
-				""";
-		String updateString = """
-				UPDATE pessoas SET nome = ? WHERE codigo = ?
-						""";
+		//refactored
+		
+		DAO.selectFromDB();
+		
 		
 
 		// SELECT
-		Statement stmt = connection.createStatement();
-		ResultSet resultado = stmt.executeQuery(selectString);
-
-		List<Pessoa> pessoas = new ArrayList<>();
-
-		while (resultado.next()) {
-			int codigo = resultado.getInt("codigo");
-			String nome = resultado.getString("nome");
-			pessoas.add(new Pessoa(codigo, nome));
-		}
-		for (Pessoa p : pessoas) {
-			System.out.println(p.getCodigo() + " ==> " + p.getNome());
-		}
+		
+		
+//		String selectString = """
+//				SELECT * FROM pessoas
+//				""";
+//		Statement stmt = connection.createStatement();
+//		ResultSet resultado = stmt.executeQuery(selectString);
+//
+//		List<Pessoa> pessoas = new ArrayList<>();
+//
+//		while (resultado.next()) {
+//			int codigo = resultado.getInt("codigo");
+//			String nome = resultado.getString("nome");
+//			pessoas.add(new Pessoa(codigo, nome));
+//		}
+//		for (Pessoa p : pessoas) {
+//			System.out.println(p.getCodigo() + " ==> " + p.getNome());
+//		stmt.close();
+//		}
 		System.out.println();
 		
 		
@@ -52,9 +53,9 @@ public class AtualizarPessoa {
 				SELECT * FROM pessoas WHERE codigo = ?
 				""";
 
-		PreparedStatement stmt3 = connection.prepareStatement(escolhidoString);	
-		stmt3.setInt(1, code);
-		ResultSet pessoaResultSet = stmt3.executeQuery();
+		PreparedStatement stmt = connection.prepareStatement(escolhidoString);	
+		stmt.setInt(1, code);
+		ResultSet pessoaResultSet = stmt.executeQuery();
 		
 
 		if (pessoaResultSet.next()) {
@@ -64,35 +65,28 @@ public class AtualizarPessoa {
 			System.out.println();
 
 		}
-		stmt3.close();
+		stmt.close();
 		
-		//MUDANÇA DE DADO
+		//MUDANÇA DE DADO UPDATE
+		String updateString = """
+				UPDATE pessoas SET nome = ? WHERE codigo = ?
+						""";
 		
 		System.out.println("Para qual nome iremos atualizar? ");
 		String novoNome = entrada.nextLine();
 		
-		PreparedStatement stmt2 = connection.prepareStatement(updateString);
-		stmt2.setString(1, novoNome);
-		stmt2.setInt(2, code);
-		stmt2.execute();
 		
-		stmt2.close();
+		PreparedStatement stmt1 = connection.prepareStatement(updateString);
+		stmt1.setString(1, novoNome);
+		stmt1.setInt(2, code);
+		stmt1.execute();
+		
+		stmt1.close();
 		System.out.println("Nome atualizado com sucesso");
 
-		ResultSet resultado2 = stmt.executeQuery(selectString);
+		DAO.selectFromDB();
 
-		List<Pessoa> pessoas2 = new ArrayList<>();
-
-		while (resultado2.next()) {
-			int codigo = resultado2.getInt("codigo");
-			String nome = resultado2.getString("nome");
-			pessoas2.add(new Pessoa(codigo, nome));
-		}
-		for (Pessoa p : pessoas2) {
-			System.out.println(p.getCodigo() + " ==> " + p.getNome());
-		}
-
-		stmt.close();
+		
 		entrada.close();
 		connection.close();
 
