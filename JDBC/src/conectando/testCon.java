@@ -8,7 +8,7 @@ public class testCon {
 	
 	public static void main(String[] args) throws SQLException{
 		
-		String URL = "jdbc:mysql://localhost/wm?verifyServerCertificate=false&useSSL=true";
+		String URL = "jdbc:mysql://localhost/curso_java?verifyServerCertificate=false&useSSL=true";
 		String user = "root";
 		String pass = "Dani0102";
 		
